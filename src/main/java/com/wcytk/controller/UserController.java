@@ -2,13 +2,12 @@ package com.wcytk.controller;
 
 
 
-import com.wcytk.Util.Util;
+import com.wcytk.util.Util;
 import com.wcytk.entity.User;
 import com.wcytk.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;

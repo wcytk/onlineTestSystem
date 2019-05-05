@@ -1,4 +1,4 @@
-package com.wcytk.Util;
+package com.wcytk.util;
 
 import java.security.MessageDigest;
 
