@@ -1,4 +1,5 @@
 <%@ page import="com.wcytk.entity.User" %>
+<%@ page import="com.wcytk.entity.Teacher" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -11,25 +12,30 @@
 </head>
 <body>
 <%
+    String name = "";
     User user = new User();
+    Teacher teacher = new Teacher();
+    boolean isTeacher = false;
     boolean flag = false;
     if(session.getAttribute("user") != null) {
         user = (User)session.getAttribute("user");
+        name = user.getName();
         flag = true;
     }
-    String name = user.getName();
-    boolean teacher = false;
-    if(user.getTeacher() == 1) {
-        teacher = true;
+    if (session.getAttribute("teacher") != null) {
+        teacher = (Teacher)session.getAttribute("teacher");
+        isTeacher = true;
+        name = teacher.getName();
+        flag = true;
     }
 %>
 <c:choose>
     <c:when test="<%=flag %>">
         欢迎，<%=name%>
         <c:choose>
-            <c:when test="<%=teacher %>">
+            <c:when test="<%=isTeacher %>">
                 教师 <br/>
-                <a href="#">考试管理</a>
+                <a href="${pageContext.request.contextPath}/teacher/class">课程管理</a>
             </c:when>
             <c:otherwise>
                 学生 <br/>

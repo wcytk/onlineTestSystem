@@ -7,13 +7,37 @@
         <id property="id" column="id"/>
         <result column="name" property="name"/>
         <result column="passwd" property="passwd"/>
-        <result column="teacher" property="teacher"/>
-        <result column="grade" property="grade"/>
+        <result column="student_id" property="student_id"/>
     </resultMap>
-    <select id="SelectUser" resultMap="UserResult">
-      select * from user where name = #{name} and passwd = #{passwd}
+
+    <resultMap id="TeacherResult" type="com.wcytk.entity.Teacher">
+        <id property="id" column="id"/>
+        <result column="name" property="name"/>
+        <result column="passwd" property="passwd"/>
+        <result column="teacher_id" property="teacher_id"/>
+    </resultMap>
+
+    <select id="SelectStudent" resultMap="UserResult">
+      SELECT * FROM user WHERE student_id = #{student_id} AND passwd = #{passwd}
     </select>
+
+    <select id="selectTeacher" resultMap="TeacherResult">
+      SELECT * FROM teacher WHERE teacher_id = #{teacher_id} AND passwd = #{passwd}
+    </select>
+
+    <select id="selectTeacherId" parameterType="int" resultMap="TeacherResult">
+        SELECT * FROM teacher WHERE teacher_id = #{teacher_id}
+    </select>
+
+    <select id="selectStudentId" parameterType="int" resultMap="UserResult">
+        SELECT * FROM user WHERE student_id = #{student_id}
+    </select>
+
     <insert id="AddUser" parameterType="com.wcytk.entity.User" useGeneratedKeys="true" keyProperty="id">
-        insert into user (name, passwd, teacher) values (#{name}, #{passwd}, #{teacher})
+        INSERT INTO user (name, passwd, student_id) VALUES (#{name}, #{passwd}, #{student_id})
+    </insert>
+
+    <insert id="addTeacher" parameterType="com.wcytk.entity.Teacher" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO teacher (name, passwd, teacher_id) VALUES  (#{name}, #{passwd}, #{teacher_id})
     </insert>
 </mapper>

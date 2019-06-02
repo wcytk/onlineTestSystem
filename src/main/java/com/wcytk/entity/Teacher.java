@@ -1,9 +1,9 @@
 package com.wcytk.entity;
 
-public class User {
+public class Teacher {
     private String name;
 
-    private int student_id;
+    private int teacher_id;
 
     private int id;
 
@@ -13,13 +13,13 @@ public class User {
         this.name = name;
     }
 
-    public void setStudent_id(int student_id) {
-        this.student_id = student_id;
-    }
-
     public void setId(int id) { this.id = id; }
 
     public void setPasswd(String passwd) { this.passwd = passwd; }
+
+    public void setTeacher_id(int teacher_id){
+        this.teacher_id = teacher_id;
+    }
 
     public String getName(){
         return this.name;
@@ -29,8 +29,7 @@ public class User {
 
     public String getPasswd() { return this.passwd; }
 
-    public int getStudent_id() {
-        return this.student_id;
+    public int getTeacher_id(){
+        return this.teacher_id;
     }
-
 }

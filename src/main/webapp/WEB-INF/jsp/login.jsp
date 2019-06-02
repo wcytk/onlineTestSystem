@@ -10,7 +10,7 @@
 <body>
 	<form method="post" action="${pageContext.request.contextPath }/loginRequest">
 		<a href="${pageContext.request.contextPath }/index">首页</a><br/>
-		<input type="text" name="name"><br/>
+		<input type="text" name="strId"><br/>
 		<input type="password" name="passwd"><br/>
 		<input type="radio" name="remember" value="1">记住密码<br/>
 		<input type="submit" name="提交" value="登录">
