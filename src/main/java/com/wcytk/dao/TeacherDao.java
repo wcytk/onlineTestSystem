@@ -14,11 +14,13 @@ public interface TeacherDao {
 
     Class getClass(@Param("id") int id, @Param("teacher_id") int teacher_id);
 
+    List<Test> getQuestionTestId(@Param("question_id") int question_id);
+
     boolean deleteClass(@Param("id") int id, @Param("teacher_id") int teacher_id);
 
     boolean updateClass(@Param("id") int id, @Param("teacher_id") int teacher_id, @Param("name") String name, @Param("student_num") int student_num);
 
-    boolean addTest(@Param("class_id") int class_id, @Param("name") String name, @Param("student_num") int student_num, @Param("current_num") int current_num, @Param("create_time") String create_time, @Param("status") boolean status, @Param("duration") int duration);
+    boolean addTest(@Param("class_id") int class_id, @Param("name") String name, @Param("student_num") int student_num, @Param("current_num") int current_num, @Param("create_time") String create_time, @Param("status") boolean status, @Param("duration") int duration, @Param("full_grade") int full_grade);
 
     List<Test> showTests(@Param("class_id") int class_id);
 
@@ -28,7 +30,11 @@ public interface TeacherDao {
 
     boolean updateTest(@Param("id") int id, @Param("class_id") int class_id, @Param("name") String name, @Param("student_num") int student_num, @Param("status") boolean status, @Param("duration") int duration);
 
-    boolean addQuestion(@Param("teacher_id") int teacher_id, @Param("question") String question, @Param("a_option") String a_option, @Param("b_option") String b_option, @Param("c_option") String c_option, @Param("d_option") String d_option, @Param("e_option") String e_option, @Param("f_option") String f_option, @Param("answer") String answer, @Param("type") int type, @Param("create_time") String create_time);
+    boolean addTestFullGrade(@Param("id") int id, @Param("question_grade") int question_grade);
+
+    boolean subTestFullGrade(@Param("id") int id, @Param("question_grade") int question_grade);
+
+    boolean addQuestion(@Param("teacher_id") int teacher_id, @Param("question") String question, @Param("a_option") String a_option, @Param("b_option") String b_option, @Param("c_option") String c_option, @Param("d_option") String d_option, @Param("e_option") String e_option, @Param("f_option") String f_option, @Param("answer") String answer, @Param("type") int type, @Param("create_time") String create_time, @Param("grade") int grade);
 
     boolean addQuestionToTest(@Param("question_id") int question_id, @Param("test_id") int test_id);
 
@@ -40,5 +46,7 @@ public interface TeacherDao {
 
     boolean deleteQuestion(@Param("id") int id, @Param("teacher_id") int teacher_id);
 
-    boolean updateQuestion(@Param("id") int id, @Param("question") String question, @Param("a_option") String a_option, @Param("b_option") String b_option, @Param("c_option") String c_option, @Param("d_option") String d_option, @Param("e_option") String e_option, @Param("f_option") String f_option, @Param("answer") String answer, @Param("type") int type);
+    boolean deleteQuestionFromTest(@Param("question_id") int question_id, @Param("test_id") int test_id);
+
+    boolean updateQuestion(@Param("id") int id, @Param("question") String question, @Param("a_option") String a_option, @Param("b_option") String b_option, @Param("c_option") String c_option, @Param("d_option") String d_option, @Param("e_option") String e_option, @Param("f_option") String f_option, @Param("answer") String answer, @Param("type") int type, @Param("grade") int grade);
 }

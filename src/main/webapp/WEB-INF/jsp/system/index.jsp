@@ -39,7 +39,7 @@
             </c:when>
             <c:otherwise>
                 学生 <br/>
-                <a href="#">考试界面</a>
+                <a href="${pageContext.request.contextPath}/student/class">我的课程</a>
             </c:otherwise>
         </c:choose> <br/>
         <a href="${pageContext.request.contextPath}/logout">注销</a>

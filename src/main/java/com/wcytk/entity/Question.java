@@ -29,6 +29,8 @@ public class Question {
 
     private String create_time;
 
+    private int grade;
+
     public void setTeacher_id(int teacher_id) {
         this.teacher_id = teacher_id;
     }
@@ -71,6 +73,10 @@ public class Question {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public void setGrade(int grade) {
+        this.grade = grade;
     }
 
     public int getId() {
@@ -119,5 +125,9 @@ public class Question {
 
     public String getCreate_time() {
         return this.create_time;
+    }
+
+    public int getGrade() {
+        return this.grade;
     }
 }

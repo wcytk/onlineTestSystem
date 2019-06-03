@@ -87,13 +87,40 @@
     }
 
     function deleteQuestion(id) {
-        if (confirm("确定要删除此测试?")) {
+        if (confirm("确定要删除此试题?")) {
             $.ajax({
                 url: "/teacher/deleteQuestion",
                 type: "POST",
                 dataType: "json",
                 data: {
                     question_id: id
+                },
+                success: function (data) {
+                    alert(data.msg);
+                    if (data.code === 10 || data.code === 11) {
+                        window.location.href = "/index";
+                    } else if (data.code === 0) {
+                        showAllQuestions();
+                    }
+                },
+                error: function (data) {
+                    alert("请求失败~");
+                }
+            });
+        }
+    }
+
+    function deleteQuestionFromTest(test_id, question_id) {
+        var question_grade = $('#question' + id).find('input[name=\"grade\"]').val();
+        if (confirm("确定要从测试中删除此试题?")) {
+            $.ajax({
+                url: "/teacher/deleteQuestionFromTest",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    question_id: question_id,
+                    test_id: test_id,
+                    question_grade: question_grade
                 },
                 success: function (data) {
                     alert(data.msg);
@@ -178,7 +205,8 @@
                     e_option: $("#addEOption").val(),
                     f_option: $("#addFOption").val(),
                     answer: $("#addAnswer").val(),
-                    type: $("#addType").val()
+                    type: $("#addType").val(),
+                    grade: $("#addGrade").val()
                 },
                 success: function (data) {
                     alert(data.msg);
@@ -198,13 +226,15 @@
     function addQuestionToTest(id) {
         if (confirm("确定要添加到测试?")) {
             var test_id = $('#question' + id).find('input[name=\"addToTest\"]').val();
+            var question_grade = $('#question' + id).find('input[name=\"grade\"]').val();
             $.ajax({
                 url: "/teacher/addQuestionToTest",
                 type: "POST",
                 dataType: "json",
                 data: {
                     question_id: id,
-                    test_id: test_id
+                    test_id: test_id,
+                    question_grade: question_grade
                 },
                 success: function (data) {
                     alert(data.msg);
@@ -262,6 +292,7 @@
         var f_option = $('#question' + id).find('input[name=\'f_option\']').val();
         var answer = $('#question' + id).find('input[name=\'answer\']').val();
         var type = $('#question' + id).find('input[name=\'type\']').val();
+        var grade = $('#question' + id).find('input[name=\'grade\']').val();
         $.ajax({
             url: "/teacher/updateQuestion",
             type: "POST",
@@ -276,7 +307,8 @@
                 e_option: e_option,
                 f_option: f_option,
                 answer: answer,
-                type: type
+                type: type,
+                grade: grade
             },
             success: function (data) {
                 alert(data.msg);
@@ -306,13 +338,14 @@
                     alert(data.msg);
                     window.location.href = "/index";
                 } else if (data.code === 0) {
-                    $('#question').empty();
-                    $('#addQuestions').empty();
+                    $('#testQuestion').empty();
+                    $('#addTestQuestions').empty();
                     var testName = $('#test' + testId).find('input[name=\'name\']').val();
-                    $('#question').append(testName + "的试题");
-                    $("#question").append("<tr><th>题目id</th><th>教师id</th><th>题干</th><th>选项A</th><th>选项B</th><th>选项C</th><th>选项D</th><th>选项E</th><th>选项F</th><th>答案</th><th>类型</th><th>创建时间</th></tr>");
+                    $('#testQuestion').append(testName + "的试题");
+                    $("#testQuestion").append("<tr><th>题目id</th><th>教师id</th><th>题干</th><th>选项A</th><th>选项B</th><th>选项C</th><th>选项D</th><th>选项E</th><th>选项F</th><th>答案</th><th>类型</th><th>分值</th><th>创建时间</th></tr>");
                     for (var i = 0; i < data.data.list.length; i++) {
                         var id = data.data.list[i].id;
+                        console.log(data.data.list[i].question);
                         var list = "<tr id=\"question" + id + "\"><th>" + id + "</th><th>" +
                             data.data.list[i].teacher_id + "</th><th><input name=\"question\" value=\"" +
                             data.data.list[i].question + "\"></th><th><input name=\"a_option\" value=\"" +
@@ -323,14 +356,15 @@
                             data.data.list[i].e_option + "\"></th><th><input name=\"f_option\" value=\"" +
                             data.data.list[i].f_option + "\"></th><th><input name=\"answer\" value=\"" +
                             data.data.list[i].answer + "\"></th><th><input name=\"type\" value=\"" +
-                            data.data.list[i].type + "\"></th><th>" +
+                            data.data.list[i].type + "\"></th><th><input name=\"grade\" value=\"" +
+                            data.data.list[i].grade + "\"></th><th>" +
                             data.data.list[i].create_time + "</th><th>" +
-                            "<input type='button' onclick=\"deleteQuestion(" + id + ")\" value='删除'>" +
+                            "<input type='button' onclick=\"deleteQuestionFromTest(" + testId + "," + id + ")\" value='删除'>" +
                             "<input type='button' onclick=\"updateQuestion(" + id + ")\" value='更新'>" +
                             "</th></tr><br/>";
-                        $("#question").append(list);
+                        $("#testQuestion").append(list);
                     }
-                    $('#addQuestions').append("<input type=\"text\" name=\"question\" placeholder=\"题干\" id=\"addNewQuestion\"/>" +
+                    $('#addTestQuestions').append("<input type=\"text\" name=\"question\" placeholder=\"题干\" id=\"addNewQuestion\"/>" +
                         "<input type=\"text\" name=\"a_option\" placeholder=\"A选项\" id=\"addAOption\"/>" +
                         "<input type=\"text\" name=\"b_option\" placeholder=\"B选项\" id=\"addBOption\"/>" +
                         "<input type=\"text\" name=\"c_option\" placeholder=\"C选项\" id=\"addCOption\"/>" +
@@ -338,7 +372,8 @@
                         "<input type=\"text\" name=\"e_option\" placeholder=\"E选项\" id=\"addEOption\"/>" +
                         "<input type=\"text\" name=\"f_option\" placeholder=\"F选项\" id=\"addFOption\"/>" +
                         "<input type=\"text\" name=\"answer\" placeholder=\"答案\" id=\"addAnswer\"/>" +
-                        "<input type=\"text\" name=\"type\" placeholder=\"类型\" id=\"addType\"/><br/>" +
+                        "<input type=\"text\" name=\"type\" placeholder=\"类型\" id=\"addType\"/>" +
+                        "<input type=\"text\" name=\"type\" placeholder=\"分值\" id=\"addGrade\"/><br/>" +
                         "<input type=\"button\" value=\"添加题目\" onclick=\"addQuestion()\"/>")
                 } else {
                     alert(data.msg);
@@ -367,7 +402,7 @@
                     $('#addTest').empty();
                     var className = $('#class' + classId).find('input[name=\'name\']').val();
                     $('#test').append(className + "课程" + "的测试");
-                    $("#test").append("<tr><th>测试id</th><th>课程id</th><th>测试名称</th><th>测试容量</th><th>已选人数</th><th>创建时间</th><th>测试状态</th><th>测试时长</th><th>操作</th></tr>");
+                    $("#test").append("<tr><th>测试id</th><th>课程id</th><th>测试名称</th><th>测试容量</th><th>已选人数</th><th>创建时间</th><th>测试状态</th><th>测试时长</th><th>总分数</th><th>操作</th></tr>");
                     for (var i = 0; i < data.data.list.length; i++) {
                         var id = data.data.list[i].id;
                         var list = "<tr id=\"test" + id + "\"><th>" + id + "</th><th>" +
@@ -378,6 +413,7 @@
                             data.data.list[i].create_time + "</th><th><input name=\"status" + id + "\" type=\"checkbox\" data-size=\"mini\" value=\"" +
                             data.data.list[i].status + "\"></th><th><input name=\"duration\" value=\"" +
                             data.data.list[i].duration + "\"></th><th>" +
+                            data.data.list[i].full_grade + "</th><th>" +
                             "<input type='button' onclick=\"deleteTest(" + classId + "," + id + ")\" value='删除'>" +
                             "<input type='button' onclick=\"updateTest(" + classId + "," + id + ")\" value='更新'>" +
                             "<input type='button' onclick=\"showQuestions(" + classId + "," + id + ")\" value='查看测试试题'>" +
@@ -486,7 +522,7 @@
                     $('#question').empty();
                     $('#addQuestions').empty();
                     $('#question').append("所有试题");
-                    $("#question").append("<tr><th>题目id</th><th>教师id</th><th>题干</th><th>选项A</th><th>选项B</th><th>选项C</th><th>选项D</th><th>选项E</th><th>选项F</th><th>答案</th><th>类型</th><th>创建时间</th><th>加入到</th><th>操作</th></tr>");
+                    $("#question").append("<tr><th>题目id</th><th>教师id</th><th>题干</th><th>选项A</th><th>选项B</th><th>选项C</th><th>选项D</th><th>选项E</th><th>选项F</th><th>答案</th><th>类型</th><th>分值</th><th>创建时间</th><th>加入到</th><th>操作</th></tr>");
                     for (var i = 0; i < data.data.list.length; i++) {
                         var id = data.data.list[i].id;
                         var list = "<tr id=\"question" + id + "\"><th>" + id + "</th><th>" +
@@ -499,9 +535,10 @@
                             data.data.list[i].e_option + "\"></th><th><input name=\"f_option\" value=\"" +
                             data.data.list[i].f_option + "\"></th><th><input name=\"answer\" value=\"" +
                             data.data.list[i].answer + "\"></th><th><input name=\"type\" value=\"" +
-                            data.data.list[i].type + "\"></th><th>" +
+                            data.data.list[i].type + "\"></th><th><input name=\"grade\" value=\"" +
+                            data.data.list[i].grade + "\"></th><th>" +
                             data.data.list[i].create_time + "</th><th>" +
-                            "<input placeholder='试题id' name=\"addToTest\"></th><th>" +
+                            "<input placeholder='测试id' name=\"addToTest\"></th><th>" +
                             "<input type='button' onclick=\"deleteQuestion(" + id + ")\" value='删除'>" +
                             "<input type='button' onclick=\"updateQuestion(" + id + ")\" value='更新'>" +
                             "<input type='button' onclick=\"addQuestionToTest("+ id +")\" value=\"添加\"></th></tr><br/>";
@@ -515,7 +552,8 @@
                         "<input type=\"text\" name=\"e_option\" placeholder=\"E选项\" id=\"addEOption\"/>" +
                         "<input type=\"text\" name=\"f_option\" placeholder=\"F选项\" id=\"addFOption\"/>" +
                         "<input type=\"text\" name=\"answer\" placeholder=\"答案\" id=\"addAnswer\"/>" +
-                        "<input type=\"text\" name=\"type\" placeholder=\"类型\" id=\"addType\"/><br/>" +
+                        "<input type=\"text\" name=\"type\" placeholder=\"类型\" id=\"addType\"/>" +
+                        "<input type=\"text\" name=\"type\" placeholder=\"分值\" id=\"addGrade\"/><br/>" +
                         "<input type=\"button\" value=\"添加题目\" onclick=\"addQuestion()\"/>")
                 }
             },
@@ -547,6 +585,9 @@
     <br/>
     <table id="test"></table>
     <form id="addTest"></form>
+    <br/>
+    <table id="testQuestion"></table>
+    <form id="addTestQuestions"></form>
     <br/>
     <table id="question"></table>
     <form id="addQuestions"></form>

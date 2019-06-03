@@ -31,6 +31,11 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public List<Test> getQuestionTestId(int question_id) {
+        return teacherDao.getQuestionTestId(question_id);
+    }
+
+    @Override
     public boolean deleteClass(int id, int teacher_id) {
         return teacherDao.deleteClass(id, teacher_id);
     }
@@ -41,8 +46,8 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public boolean addTest(int class_id, String name, int student_num, int current_num, String create_time, boolean status, int duration) {
-        return teacherDao.addTest(class_id, name, student_num, current_num, create_time, status, duration);
+    public boolean addTest(int class_id, String name, int student_num, int current_num, String create_time, boolean status, int duration, int question_grade) {
+        return teacherDao.addTest(class_id, name, student_num, current_num, create_time, status, duration, question_grade);
     }
 
     @Override
@@ -66,8 +71,18 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public boolean addQuestion(int teacher_id, String question, String a_option, String b_option, String c_option, String d_option, String e_option, String f_option, String answer, int type, String create_time) {
-        return teacherDao.addQuestion(teacher_id, question, a_option, b_option, c_option, d_option, e_option, f_option, answer, type, create_time);
+    public boolean addTestFullGrade(int id, int question_grade) {
+        return teacherDao.addTestFullGrade(id, question_grade);
+    }
+
+    @Override
+    public boolean subTestFullGrade(int id, int question_grade) {
+        return teacherDao.subTestFullGrade(id, question_grade);
+    }
+
+    @Override
+    public boolean addQuestion(int teacher_id, String question, String a_option, String b_option, String c_option, String d_option, String e_option, String f_option, String answer, int type, String create_time, int grade) {
+        return teacherDao.addQuestion(teacher_id, question, a_option, b_option, c_option, d_option, e_option, f_option, answer, type, create_time, grade);
     }
 
     @Override
@@ -96,8 +111,13 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public boolean updateQuestion(int id, String question, String a_option, String b_option, String c_option, String d_option, String e_option, String f_option, String answer, int type) {
-        return teacherDao.updateQuestion(id, question, a_option, b_option, c_option, d_option, e_option, f_option, answer, type);
+    public boolean deleteQuestionFromTest(int question_id, int test_id) {
+        return teacherDao.deleteQuestionFromTest(question_id, test_id);
+    }
+
+    @Override
+    public boolean updateQuestion(int id, String question, String a_option, String b_option, String c_option, String d_option, String e_option, String f_option, String answer, int type, int grade) {
+        return teacherDao.updateQuestion(id, question, a_option, b_option, c_option, d_option, e_option, f_option, answer, type, grade);
     }
 
 }

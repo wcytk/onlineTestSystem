@@ -21,6 +21,8 @@ public class Test {
 
     private Question question;
 
+    private int full_grade;
+
     public void setClass_id(int class_id) {
         this.class_id = class_id;
     }
@@ -51,6 +53,10 @@ public class Test {
 
     public void setQuestion(Question question) {
         this.question = question;
+    }
+
+    public void setFull_grade(int full_grade) {
+        this.full_grade = full_grade;
     }
 
     public int getId() {
@@ -87,5 +93,9 @@ public class Test {
 
     public Question getQuestion() {
         return this.question;
+    }
+
+    public int getFull_grade() {
+        return this.full_grade;
     }
 }

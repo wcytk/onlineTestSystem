@@ -18,6 +18,8 @@
         <result column="student_num" property="student_num"/>
         <result column="create_time" property="create_time"/>
         <result column="status" property="status"/>
+        <result column="duration" property="duration"/>
+        <result column="full_grade" property="full_grade"/>
     </resultMap>
 
     <resultMap id="QuestionResult" type="com.wcytk.entity.Question">
@@ -32,12 +34,14 @@
         <result column="answer" property="answer"/>
         <result column="type" property="type"/>
         <result column="create_time" property="create_time"/>
+        <result column="grade" property="grade"/>
     </resultMap>
 
     <resultMap id="TestQuestion" type="com.wcytk.entity.Test">
         <collection property="question" ofType="com.wcytk.entity.Question">
             <id property="id" column="questionId"/>
             <id property="teacher_id" column="teacher_id"/>
+            <result column="question" property="question"/>
             <result column="a_option" property="a_option"/>
             <result column="b_option" property="b_option"/>
             <result column="c_option" property="c_option"/>
@@ -47,6 +51,7 @@
             <result column="answer" property="answer"/>
             <result column="type" property="type"/>
             <result column="create_time" property="question_create_time"/>
+            <result column="grade" property="grade"/>
         </collection>
     </resultMap>
 
@@ -55,12 +60,12 @@
     </insert>
 
     <insert id="addTest" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO test(class_id, name, student_num, current_num, create_time, status, duration) VALUES (#{class_id}, #{name}, #{student_num}, #{current_num}, #{create_time}, #{status}, #{duration})
+        INSERT INTO test(class_id, name, student_num, current_num, create_time, status, duration, full_grade) VALUES (#{class_id}, #{name}, #{student_num}, #{current_num}, #{create_time}, #{status}, #{duration}, #{full_grade})
     </insert>
 
     <insert id="addQuestion" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO question(teacher_id, question, a_option, b_option, c_option, d_option, e_option, f_option, answer, type, create_time)
-        VALUES (#{teacher_id}, #{question}, #{a_option}, #{b_option}, #{c_option}, #{d_option}, #{e_option}, #{f_option}, #{answer}, #{type}, #{create_time})
+        INSERT INTO question(teacher_id, question, a_option, b_option, c_option, d_option, e_option, f_option, answer, type, create_time, grade)
+        VALUES (#{teacher_id}, #{question}, #{a_option}, #{b_option}, #{c_option}, #{d_option}, #{e_option}, #{f_option}, #{answer}, #{type}, #{create_time}, #{grade})
     </insert>
 
     <insert id="addQuestionToTest" useGeneratedKeys="true" keyProperty="id">
@@ -84,6 +89,7 @@
         test.status as status,
         test.duration as duration,
         question.id as questionId,
+        question.question as question,
         question.teacher_id as teacher_id,
         question.a_option as a_option,
         question.b_option as b_option,
@@ -93,7 +99,8 @@
         question.f_option as f_option,
         question.answer as answer,
         question.type as type,
-        question.create_time as question_create_time
+        question.create_time as question_create_time,
+        question.grade as grade
         from test
         inner join question_test on
         test.id = question_test.test_id
@@ -115,6 +122,19 @@
         SELECT * FROM class WHERE teacher_id = #{teacher_id} AND id = #{id}
     </select>
 
+    <select id="getQuestionTestId" resultMap="TestResult">
+        SELECT
+        test.id as id
+        FROM
+        question,
+        test,
+        question_test
+        WHERE
+        question_test.question_id = #{question_id}
+        AND
+        question_test.test_id = test.id
+    </select>
+
     <select id="getQuestion" parameterType="int" resultMap="QuestionResult">
         SELECT * FROM question WHERE id = #{id} AND teacher_id = #{teacher_id}
     </select>
@@ -131,6 +151,10 @@
         DELETE FROM question WHERE teacher_id = #{teacher_id} AND id = #{id}
     </delete>
 
+    <delete id="deleteQuestionFromTest" parameterType="int">
+        DELETE FROM question_test WHERE question_id = #{question_id} AND test_id = #{test_id}
+    </delete>
+
     <update id="updateClass">
         UPDATE class SET student_num = #{student_num}, name = #{name} WHERE teacher_id = #{teacher_id} AND id = #{id}
     </update>
@@ -139,10 +163,18 @@
         UPDATE test SET name = #{name}, status = #{status} WHERE class_id = #{class_id} AND id = #{id}
     </update>
 
+    <update id="addTestFullGrade">
+        UPDATE test SET full_grade = full_grade + #{question_grade} WHERE id = #{id}
+    </update>
+
+    <update id="subTestFullGrade">
+        UPDATE test SET full_grade = full_grade - #{question_grade} WHERE id = #{id}
+    </update>
+
     <update id="updateQuestion">
         UPDATE question SET question = #{question}, a_option = #{a_option},
         b_option = #{b_option}, c_option = #{c_option}, d_option = #{d_option}, e_option = #{e_option}, f_option = #{f_option},
-        answer = #{answer}, type = #{type}
+        answer = #{answer}, type = #{type}, grade = #{grade}
         WHERE id = #{id}
     </update>
 </mapper>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wcytk.dao.StudentDao">
+    <resultMap id="ClassResult" type="com.wcytk.entity.Class">
+        <id property="id" column="id"/>
+        <result column="teacher_id" property="teacher_id"/>
+        <result column="name" property="name"/>
+        <result column="student_num" property="student_num"/>
+        <result column="create_time" property="create_time"/>
+    </resultMap>
+
+    <resultMap id="TestResult" type="com.wcytk.entity.Test">
+        <id property="id" column="id"/>
+        <result column="class_id" property="class_id"/>
+        <result column="name" property="name"/>
+        <result column="student_num" property="student_num"/>
+        <result column="create_time" property="create_time"/>
+        <result column="status" property="status"/>
+        <result column="duration" property="duration"/>
+        <result column="full_grade" property="full_grade"/>
+    </resultMap>
+
+    <resultMap id="UserTestResult" type="com.wcytk.entity.UserTest">
+        <id property="id" column="id"/>
+        <result column="student_id" property="student_id"/>
+        <result column="test_id" property="test_id"/>
+        <result column="create_time" property="create_time"/>
+    </resultMap>
+
+    <resultMap id="QuestionResult" type="com.wcytk.entity.Question">
+        <id property="id" column="id"/>
+        <id property="teacher_id" column="teacher_id"/>
+        <result column="aQuestion" property="question"/>
+        <result column="a_option" property="a_option"/>
+        <result column="b_option" property="b_option"/>
+        <result column="c_option" property="c_option"/>
+        <result column="d_option" property="d_option"/>
+        <result column="e_option" property="e_option"/>
+        <result column="f_option" property="f_option"/>
+        <result column="answer" property="answer"/>
+        <result column="type" property="type"/>
+        <result column="create_time" property="create_time"/>
+        <result column="grade" property="grade"/>
+    </resultMap>
+
+    <insert id="addClass" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_class(student_id, class_id, create_time) VALUES (#{student_id}, #{class_id}, #{create_time})
+    </insert>
+
+    <insert id="addUserTest" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_test(student_id, test_id, grade, create_time) VALUES (#{student_id}, #{test_id}, #{grade}, #{create_time})
+    </insert>
+
+    <select id="showAllClasses" resultMap="ClassResult">
+        SELECT id, name, current_num, student_num FROM class ORDER BY create_time DESC
+    </select>
+
+    <select id="showTests" parameterType="int" resultMap="TestResult">
+        SELECT id, name, status, duration FROM test WHERE class_id = #{class_id} ORDER BY create_time DESC
+    </select>
+
+    <select id="getMyClass" resultMap="ClassResult">
+        SELECT * FROM user_class WHERE student_id = #{student_id} AND class_id = #{class_id}
+    </select>
+
+    <select id="getClass" resultMap="ClassResult">
+        SELECT id, name, current_num, student_num FROM class WHERE id = #{class_id}
+    </select>
+
+    <select id="getQuestion" resultMap="QuestionResult">
+        SELECT * FROM question WHERE id = #{question_id}
+    </select>
+
+    <select id="getTest" parameterType="int" resultMap="TestResult">
+        SELECT * FROM test WHERE id = #{test_id}
+    </select>
+
+    <select id="getMyTest" parameterType="int" resultMap="UserTestResult">
+        SELECT * FROM user_test WHERE student_id = #{student_id} AND test_id = #{test_id}
+    </select>
+
+    <select id="showMyClasses" resultMap="ClassResult">
+        SELECT
+        class.id as id,
+        class.name as name,
+        class.current_num as current_num,
+        class.student_num as student_num
+        FROM
+        user,
+        class,
+        user_class
+        WHERE
+        user_class.student_id = #{student_id}
+        AND
+        user_class.class_id = class.id
+--         两个对应关系都不能少
+    </select>
+
+    <select id="showQuestions" parameterType="int" resultMap="QuestionResult">
+        SELECT
+        question.id as id,
+        question.question as aQuestion,
+        question.a_option as a_option,
+        question.b_option as b_option,
+        question.c_option as c_option,
+        question.d_option as d_option,
+        question.e_option as e_option,
+        question.f_option as f_option,
+        question.type as type
+        FROM test, question, question_test
+        WHERE question_test.test_id = #{test_id}
+        AND question_test.question_id = question.id
+        ORDER BY question.type
+    </select>
+
+    <update id="addClassNum">
+        UPDATE class SET current_num = current_num + 1 WHERE id = #{class_id}
+    </update>
+
+    <update id="subClassNum">
+        UPDATE class SET current_num = current_num - 1 WHERE id = #{class_id}
+    </update>
+
+    <delete id="dropClass" parameterType="int">
+        DELETE FROM user_class WHERE student_id = #{student_id} AND class_id = #{class_id}
+    </delete>
+</mapper>
